@@ -7,7 +7,21 @@
 #include <stdlib.h>
 int dx=0,dy=0,d0=0;
 float ss=1;
+/* keys[]={up,down,left,right,+,-,*,/} */
+bool keys[]={false,false,false,false,false,false,false,false};
 int S_width=640,S_height=480;
+int LastUpdateTime=0;
+void update()
+{
+    dy+=5*int(keys[0]);
+    dy-=5*int(keys[1]);
+    dx-=5*int(keys[2]);
+    dx+=5*int(keys[3]);
+    d0+=int(keys[4]);
+    d0-=int(keys[5]);
+    ss+=.2*int(keys[6]);
+    ss-=.2*int(keys[7]);
+}
 void drawSmBox()
 {
      glPushMatrix();
@@ -22,6 +36,18 @@ void drawSmBox()
         glVertex3f(15,15,0);
     glEnd();
     glPopMatrix();
+}
+void timer(int value)
+{
+    int CurrentTime=glutGet(GLUT_ELAPSED_TIME);
+    if((CurrentTime-LastUpdateTime)<20)
+        glutTimerFunc(5, timer, 0);
+    else
+    {
+        LastUpdateTime=CurrentTime;
+        update();
+        glutPostRedisplay();
+    }
 }
 static void resize1(int width, int height)
 {
@@ -41,6 +67,7 @@ static void display(void)
     glClear(GL_COLOR_BUFFER_BIT );//| GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+   // update();
     drawSmBox();
     glFlush();
     glutSwapBuffers();
@@ -50,68 +77,126 @@ static void splkey(int key, int x, int y)
 {
     switch (key){
         case GLUT_KEY_RIGHT:
-            dx+=5;
+            keys[3]=true;
             break;
 
         case GLUT_KEY_LEFT:
-            dx-=5;
+            keys[2]=true;
             break;
 
         case GLUT_KEY_UP:
-            dy+=5;
+            keys[0]=true;
             break;
 
         case GLUT_KEY_DOWN:
-            dy-=5;
+            keys[1]=true;
+            break;
+    }
+    glutTimerFunc(0,timer,0);
+    //glutPostRedisplay();
+}
+static void splkeyup(int key, int x, int y)
+{
+    switch (key){
+        case GLUT_KEY_RIGHT:
+            keys[3]=false;
             break;
 
-        default:
-         break;
+        case GLUT_KEY_LEFT:
+            keys[2]=false;
+            break;
+
+        case GLUT_KEY_UP:
+            keys[0]=false;
+            break;
+
+        case GLUT_KEY_DOWN:
+            keys[1]=false;
+            break;
     }
-    glutPostRedisplay();
+    glutTimerFunc(0,timer,0);
+   // glutPostRedisplay();
 }
+
 static void key(unsigned char key, int x, int y)
 {
     switch (key)
     {
+        case 27:
         case 'q':
             exit(0);
             break;
         case 'd':
-            dx+=5;
+            keys[3]=true;
             break;
         case 'a':
-            dx-=5;
+            keys[2]=true;
             break;
         case 'w':
-            dy+=5;
+            keys[0]=true;
             break;
         case 's':
-            dy-=5;
+            keys[1]=true;
             break;
         case '+':
-            d0++;
+            keys[4]=true;
             break;
         case '-':
-            d0--;
+            keys[5]=true;
             break;
         case '*':
-            ss+=.2;
+            keys[6]=true;
             break;
         case '/':
-            ss-=.2;
+            keys[7]=true;
             break;
     }
 
-    glutPostRedisplay();
+    glutTimerFunc(0,timer,0);
+    //glutPostRedisplay();
+}
+static void keyup(unsigned char key, int x, int y)
+{
+    switch (key)
+    {
+        case 27:
+        case 'q':
+            exit(0);
+            break;
+        case 'd':
+            keys[3]=false;
+            break;
+        case 'a':
+            keys[2]=false;
+            break;
+        case 'w':
+            keys[0]=false;
+            break;
+        case 's':
+            keys[1]=false;
+            break;
+        case '+':
+            keys[4]=false;
+            break;
+        case '-':
+            keys[5]=false;
+            break;
+        case '*':
+            keys[6]=false;
+            break;
+        case '/':
+            keys[7]=false;
+            break;
+    }
+    glutTimerFunc(0,timer,0);
+    //glutPostRedisplay();
 }
 
 static void idle(void)
 {
-    glutPostRedisplay();
+    glutTimerFunc(0,timer,0);
+   // glutPostRedisplay();
 }
-
-
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
@@ -124,8 +209,12 @@ int main(int argc, char *argv[])
     glutReshapeFunc(resize1);
     glutDisplayFunc(display);
     glutKeyboardFunc(key);
+    glutKeyboardUpFunc(keyup);
     glutSpecialFunc(splkey);
+    glutSpecialUpFunc(splkeyup);
     glutIdleFunc(idle);
+    glutSetKeyRepeat(0);
+    glutTimerFunc(0,timer,0);
     glutMainLoop();
 
     return EXIT_SUCCESS;
