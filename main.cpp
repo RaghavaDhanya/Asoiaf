@@ -3,20 +3,19 @@
 #else
 #include <GL/glut.h>
 #endif
-
 #include <stdlib.h>
-int dx=0,dy=0,d0=0;
-float ss=1;
+//int
+float ss=1,dx=0,dy=0,d0=0;
 /* keys[]={up,down,left,right,+,-,*,/} */
 bool keys[]={false,false,false,false,false,false,false,false};
 int S_width=640,S_height=480;
 int LastUpdateTime=0;
 void update()
 {
-    dy+=5*int(keys[0]);
-    dy-=5*int(keys[1]);
-    dx-=5*int(keys[2]);
-    dx+=5*int(keys[3]);
+    dy=(dy+=5*int(keys[0]))>(S_height/2-15*ss)?(S_height/2-15*ss):dy;
+    dy=(dy-=5*int(keys[1]))<(-S_height/2+15*ss)?(-S_height/2+15*ss):dy;
+    dx=(dx-=5*int(keys[2]))<(-S_width/2+15*ss)?(-S_width/2+15*ss):dx;
+    dx=(dx+=5*int(keys[3]))>(S_width/2-15*ss)?(S_width/2-15*ss):dx;
     d0+=int(keys[4]);
     d0-=int(keys[5]);
     ss+=.2*int(keys[6]);
@@ -24,7 +23,7 @@ void update()
 }
 void drawSmBox()
 {
-     glPushMatrix();
+    glPushMatrix();
     glTranslatef(dx,dy,0);
     glScalef(ss,ss,0);
     glRotatef(d0*10,0,0,1);
