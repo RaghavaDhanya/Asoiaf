@@ -4,29 +4,47 @@
 #include <GL/glut.h>
 #endif
 #include <stdlib.h>
-//int
+class box
+{
+    float scale,x,y,rot;
+public:
+    box()
+    {scale=1;x=y=rot=0;}
+    void update(float scale,float x,float y,float rot)
+    {
+        this->scale=scale;this->x=x;this->y=y;this->rot=rot;
+    }
+    friend void drawSmBox(box &);
+    friend bool collideBox(box &,box &);
+};
+box user;
 float ss=1,dx=0,dy=0,d0=0;
 /* keys[]={up,down,left,right,+,-,*,/} */
 bool keys[]={false,false,false,false,false,false,false,false};
 int S_width=640,S_height=480;
 int LastUpdateTime=0;
+bool collideBox(box &a,box &b)
+{
+    return false;
+}
 void update()
 {
     dy=(dy+=5*int(keys[0]))>(S_height/2-15*ss)?(S_height/2-15*ss):dy;
     dy=(dy-=5*int(keys[1]))<(-S_height/2+15*ss)?(-S_height/2+15*ss):dy;
     dx=(dx-=5*int(keys[2]))<(-S_width/2+15*ss)?(-S_width/2+15*ss):dx;
     dx=(dx+=5*int(keys[3]))>(S_width/2-15*ss)?(S_width/2-15*ss):dx;
-    d0+=int(keys[4]);
-    d0-=int(keys[5]);
-    ss+=.2*int(keys[6]);
-    ss-=.2*int(keys[7]);
+    d0+=1;//int(keys[4]);
+    //d0-=int(keys[5]);
+    //ss+=.2*int(keys[6]);
+    //ss-=.2*int(keys[7]);
+    user.update(ss,dx,dy,d0);
 }
-void drawSmBox()
+void drawSmBox(box &a)
 {
     glPushMatrix();
-    glTranslatef(dx,dy,0);
-    glScalef(ss,ss,0);
-    glRotatef(d0*10,0,0,1);
+    glTranslatef(a.x,a.y,0);
+    glScalef(a.scale,a.scale,0);
+    glRotatef(a.rot*5,0,0,1);
     glBegin(GL_POLYGON);
         glColor3d(.5,0,.2);
         glVertex3f(-15,15,0);
@@ -67,7 +85,7 @@ static void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
    // update();
-    drawSmBox();
+    drawSmBox(user);
     glFlush();
     glutSwapBuffers();
 }
