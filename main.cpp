@@ -4,38 +4,26 @@
 #include <GL/glut.h>
 #endif
 #include <stdlib.h>
-//int
+#include "Asoiaf.h"
+userBox user;
+randomBox arr0(0);
+randomBox arr1(1);
+randomBox arr2(2);
+randomBox arr3(3);
 float ss=1,dx=0,dy=0,d0=0;
-/* keys[]={up,down,left,right,+,-,*,/} */
-bool keys[]={false,false,false,false,false,false,false,false};
-int S_width=640,S_height=480;
 int LastUpdateTime=0;
-void update()
-{
-    dy=(dy+=5*int(keys[0]))>(S_height/2-15*ss)?(S_height/2-15*ss):dy;
-    dy=(dy-=5*int(keys[1]))<(-S_height/2+15*ss)?(-S_height/2+15*ss):dy;
-    dx=(dx-=5*int(keys[2]))<(-S_width/2+15*ss)?(-S_width/2+15*ss):dx;
-    dx=(dx+=5*int(keys[3]))>(S_width/2-15*ss)?(S_width/2-15*ss):dx;
-    d0+=int(keys[4]);
-    d0-=int(keys[5]);
-    ss+=.2*int(keys[6]);
-    ss-=.2*int(keys[7]);
-}
-void drawSmBox()
-{
-    glPushMatrix();
-    glTranslatef(dx,dy,0);
-    glScalef(ss,ss,0);
-    glRotatef(d0*10,0,0,1);
-    glBegin(GL_POLYGON);
-        glColor3d(.5,0,.2);
-        glVertex3f(-15,15,0);
-        glVertex3f(-15,-15,0);
-        glVertex3f(15,-15,0);
-        glVertex3f(15,15,0);
-    glEnd();
-    glPopMatrix();
-}
+//void update()
+//{
+//    dy=(dy+=5*int(keys[0]))>(S_height/2-15*ss)?(S_height/2-15*ss):dy;
+//    dy=(dy-=5*int(keys[1]))<(-S_height/2+15*ss)?(-S_height/2+15*ss):dy;
+//    dx=(dx-=5*int(keys[2]))<(-S_width/2+15*ss)?(-S_width/2+15*ss):dx;
+//    dx=(dx+=5*int(keys[3]))>(S_width/2-15*ss)?(S_width/2-15*ss):dx;
+//    d0+=1;//int(keys[4]);
+//    //d0-=int(keys[5]);
+//    //ss+=.2*int(keys[6]);
+//    //ss-=.2*int(keys[7]);
+//    user.update(ss,dx,dy,d0);
+//}
 void timer(int value)
 {
     int CurrentTime=glutGet(GLUT_ELAPSED_TIME);
@@ -44,7 +32,11 @@ void timer(int value)
     else
     {
         LastUpdateTime=CurrentTime;
-        update();
+        user.update();
+        arr0.update();
+        arr1.update();
+        arr2.update();
+        arr3.update();
         glutPostRedisplay();
     }
 }
@@ -67,7 +59,11 @@ static void display(void)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
    // update();
-    drawSmBox();
+    user.drawBox();
+    arr0.drawBox();
+    arr1.drawBox();
+    arr2.drawBox();
+    arr3.drawBox();
     glFlush();
     glutSwapBuffers();
 }
