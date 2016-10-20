@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include "Asoiaf.h"
 userBox user;
+randomBox arr0(0);
+randomBox arr1(1);
+randomBox arr2(2);
+randomBox arr3(3);
 float ss=1,dx=0,dy=0,d0=0;
 int LastUpdateTime=0;
 //void update()
@@ -29,6 +33,10 @@ void timer(int value)
     {
         LastUpdateTime=CurrentTime;
         user.update();
+        arr0.update();
+        arr1.update();
+        arr2.update();
+        arr3.update();
         glutPostRedisplay();
     }
 }
@@ -52,6 +60,10 @@ static void display(void)
     glLoadIdentity();
    // update();
     user.drawBox();
+    arr0.drawBox();
+    arr1.drawBox();
+    arr2.drawBox();
+    arr3.drawBox();
     glFlush();
     glutSwapBuffers();
 }

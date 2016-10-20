@@ -1,5 +1,6 @@
 #ifndef ASOIAF_H_
 #define ASOIAF_H_
+#include <cstdlib>
 int S_width=640,S_height=480;
 /* keys[]={up,down,left,right,+,-,*,/} */
 bool keys[]={false,false,false,false,false,false,false,false};
@@ -46,6 +47,53 @@ public:
             //scale+=.2*int(keys[6]);
             //scale-=.2*int(keys[7]);
         }
+};
+class randomBox:public Box
+{
+    //0 left , 1 right, 3 up, 2 down
+    int direction;
+public:
+    randomBox(int d)
+    {
+        this->direction=d;
+        this->scale=1;
+        this->rot=0;
+        switch(d)
+        {
+        case 0: this->x=S_width/2;
+                this->y=rand()%(S_height)-(S_height/2);
+                break;
+        case 1: this->x=-S_width/2;
+                this->y=rand()%(S_height)-(S_height/2);
+                break;
+        case 2: this->x=rand()%(S_width)-(S_width/2);
+                this->y=S_height/2;
+                break;
+        case 3: this->x=rand()%(S_width)-(S_width/2);
+                this->y=-S_height/2;
+                break;
+
+        }
+
+    }
+    void update()
+    {
+        switch(this->direction)
+        {
+        case 0:
+            x=(x-=1)<(-S_width/2+15*scale)?(-S_width/2+15*scale):x;
+            break;
+        case 1:
+            x=(x+=1)>(S_width/2-15*scale)?(S_width/2-15*scale):x;
+            break;
+        case 2:
+            y=(y-=1)<(-S_height/2+15*scale)?(-S_height/2+15*scale):y;
+            break;
+        case 3:
+            y=(y+=1)>(S_height/2-15*scale)?(S_height/2-15*scale):y;
+            break;
+        }
+    }
 };
 bool collideBox(Box &a,Box &b)
 {
